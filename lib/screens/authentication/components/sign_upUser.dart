@@ -1,34 +1,33 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:green_app/screens/home/home_screen.dart';
-import 'package:green_app/constants.dart';
-import 'package:green_app/screens/authentication/components/category_chosen.dart';
-import 'package:green_app/screens/authentication/components/sign_upUser.dart';
-import 'components/bg-image.dart';
-import 'components/custome_text_field.dart';
+import 'package:green_app/dashboard/user_dashboard.dart';
+import 'package:green_app/screens/authentication/registration_page.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key key}) : super(key: key);
+import '../../../constants.dart';
+import 'bg-image.dart';
+import 'custome_text_field.dart';
 
+class UserSignUp extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _UserSignUpState createState() => _UserSignUpState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+class _UserSignUpState extends State<UserSignUp> {
+   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PersistentBottomSheetController _sheetController;
+  String _user;
   String _email;
+  String _confirmPassword;
   String _password;
   String _displayName;
   bool _loading = false;
   bool _autoValidate = false;
   String errorMsg = "";
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
+     body: Stack(
       fit: StackFit.expand,
       children: <Widget>[
         BgImage(),
@@ -38,51 +37,33 @@ class _LoginPageState extends State<LoginPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  logo(),
+                 logo(),
                   Form(
                     key: _formKey,
                     child: Column(
                       children: <Widget>[
-                        // Container(
-                        //   width: MediaQuery.of(context).size.width,
-                        //   height: 140,
-                        //   child: Stack(
-                        //     children: <Widget>[
-                        //       Positioned(
-                        //         child: Align(
-                        //           child: Container(
-                        //             width: 130,
-                        //             height: 130,
-                        //             decoration: BoxDecoration(
-                        //                 shape: BoxShape.circle,
-                        //                 color: kPrimaryColor),
-                        //           ),
-                        //           alignment: Alignment.center,
-                        //         ),
-                        //       ),
-                        //       Positioned(
-                        //         child: Container(
-                        //           child: Text(
-                        //             "Welcome",
-                        //             style: TextStyle(
-                        //               fontSize: 48,
-                        //               fontWeight: FontWeight.bold,
-                        //               color: Colors.white,
-                        //             ),
-                        //           ),
-                        //           alignment: Alignment.center,
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
+                        
                         Padding(
                             padding: EdgeInsets.only(bottom: 20, top: 60),
                             child: CustomTextField(
                               onSaved: (input) {
+                                _user = input;
+                              },
+                              //validator:emailValidator,
+                               
+                              validator: (input) =>
+                                  input.isEmpty ? "*Required" : null,
+                              icon: Icon(Icons.account_box,),
+                              hint: "USER NAME",
+                              
+                            )),
+                        Padding(
+                            padding: EdgeInsets.only(bottom: 20),
+                            child: CustomTextField(
+                              onSaved: (input) {
                                 _email = input;
                               },
-                              validator: emailValidator,
+                              validator:emailValidator,
                               icon: Icon(Icons.email),
                               hint: "EMAIL",
                             )),
@@ -96,13 +77,24 @@ class _LoginPageState extends State<LoginPage> {
                                   input.isEmpty ? "*Required" : null,
                               hint: "PASSWORD",
                             )),
+                            
+                        Padding(
+                            padding: EdgeInsets.only(bottom: 20),
+                            child: CustomTextField(
+                              icon: Icon(Icons.lock),
+                              obsecure: true,
+                              onSaved: (input) => _confirmPassword = input,
+                              validator: (input) =>
+                                  input.isEmpty ? "*Required" :_confirmPassword!=_password?"*Not Matched*":null,
+                              hint: "CONFIRM PASSWORD",
+                            )),
                         SizedBox(
                           height: 20,
                         ),
-                        Padding(
+                                      Padding(
                           padding: EdgeInsets.only(
-                              left: 50,
-                              right: 50,
+                              left: 80,
+                              right: 80,
                               bottom: MediaQuery.of(context).viewInsets.bottom),
                           child: _loading == true
                               ? CircularProgressIndicator(
@@ -112,13 +104,11 @@ class _LoginPageState extends State<LoginPage> {
                               : Container(
                                   child: filledButton(
                                     
-                                      "Let's Login",
+                                      "Create",
                                       kTextColor,
                                       kPrimaryColor,
                                       kPrimaryColor,
                                       Colors.white,
-                                      //wait ok
-                                      //bat sun yha on tap kasay karaain gay
                                       _validateRegisterInput),
                                   height: 40,
                                   width: MediaQuery.of(context).size.width,
@@ -127,45 +117,30 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(
                           height: 20,
                         ),
-                        
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 50,
-                              right: 50,
-                              bottom: MediaQuery.of(context).viewInsets.bottom),
-                          child: _loading == true
-                              ? CircularProgressIndicator(
-                                  valueColor: new AlwaysStoppedAnimation<Color>(
-                                      kPrimaryColor),
-                                )
-                              : Container(
-                                  child: filledButton(
-                                    
-                                      "Create Account",
-                                      kTextColor,
-                                      kPrimaryColor,
-                                      kPrimaryColor,
-                                      Colors.white,
-                                      //wait ok
-                                      //bat sun yha on tap kasay karaain gay
-                                      _validateRegisterInput),
-                                  height: 40,
-                                  width: MediaQuery.of(context).size.width,
-                                ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
+          
                       ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    ));
+                      )
+                      )
+                      ]
+                      )
+                      )
+                      )
+                      )
+                      ]     
+     )
+      );
+  }
+
+  
+  String emailValidator(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (value.isEmpty) return '*Required';
+    if (!regex.hasMatch(value))
+      return '*Enter a valid email';
+    else
+      return null;
   }
 
   Widget filledButton(String text, Color splashColor, Color highlightColor,
@@ -184,27 +159,15 @@ class _LoginPageState extends State<LoginPage> {
             fontWeight: FontWeight.bold, color: textColor, fontSize: 20),
       ),
       onPressed: () {
-        if(text=="Let's Login")
-         function();
+         //function();
+           Navigator.pushReplacement(
+                   context, MaterialPageRoute(builder: (context) => UserDashboard()));
 
-         else if(text=="Create Account"){
-         Navigator.pushReplacement(
-                   context, MaterialPageRoute(builder: (context) => Category()));
-         }
        },
     );
   }
 
-  String emailValidator(String value) {
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = new RegExp(pattern);
-    if (value.isEmpty) return '*Required';
-    if (!regex.hasMatch(value))
-      return '*Enter a valid email';
-    else
-      return null;
-  }
+
 
   void _validateRegisterInput() async {
     final FormState form = _formKey.currentState;
@@ -214,6 +177,20 @@ class _LoginPageState extends State<LoginPage> {
         _loading = true;
       });
       try {
+                 _sheetController.setState(() {
+                errorMsg = "Sucessfully";
+                _loading = false;
+              
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Container(
+                        child: Text(errorMsg),
+                      ),
+                    );
+                  });
+                 });
         // UserCredential user =
         // await FirebaseAuth.instance.createUserWithEmailAndPassword();
 
@@ -304,7 +281,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: 150,
                   child: Align(
                     child: Text(
-                      "Welcome",
+                      "Sign Up",
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,

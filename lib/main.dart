@@ -10,11 +10,13 @@ void main() {
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
+
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Green App',
       theme: ThemeData(
+        primarySwatch: Colors.blue,
         scaffoldBackgroundColor: kBackgroundColor,
         primaryColor: kPrimaryColor,
         textTheme: Theme.of(context).textTheme.apply(bodyColor: kTextColor),

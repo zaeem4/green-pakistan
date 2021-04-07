@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-class BgImage extends StatelessWidget {
+class UsNavBg extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      "assets/images/rose_image_1.png",
+  return Image.asset(
+      "assets/images/tulip_image_2.png",
       fit: BoxFit.cover,
       color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
+    
     );
   }
 }
